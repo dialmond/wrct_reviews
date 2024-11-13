@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+  <link type="text/css" href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="is-{{ message.tags }}"{% endif %}>
+          {{ message }}<span class='close' onclick="close_message(this)" aria-label="close message">✖</span>
+      </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <nav>
+    <ul>
+      <li><a href="{% url 'library:index' %}"{% if indexView %} class="active"{% endif %}>home</a></li>
+      <li><a href="{% url 'library:list' 'album' %}"{% if listView %} class="active"{% endif %}>explore db</a></li>
+      <li><a href="{% url 'library:actions' %}"{% if actionView %} class="active"{% endif %}>action log</a></li>
+      <li><a href="{% url 'library:leaderboard' %}"{% if leaderboardView %} class="active"{% endif %}>leaderboard</a></li>
+      <li><a href="/logout/">log out</a></li>
+      <li>
+        <form action="{% url 'library:search' %}" method="post">
+          {% csrf_token %}
+          Find
+          <select name="table" id="table">
+            <option value="album">Albums</option>
+            <option value="artist">Artists</option>
+            <option value="label">Labels</option>
+            <option value="review">Reviews</option>
+            <option value="user">Users</option>
+            <option value="genre">Genres</option>
+          </select>
+          that
+          <select name="pos" id="pos">
+            <option value="icontains">include</option>
+            <option value="istartswith">start with</option>
+            <option value="iendswith">end with</option>
+            <option value="iexact">match exactly</option>
+          </select>
+          <input type='input' name="query" id="query"></input>
+          <button class='small gray' type="submit">search</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,26 @@
+services:
+  reviews-db:
+    image: mysql:9
+    container_name: wrct-reviews-mariadb
+    restart: always
+    volumes:
+      - ./data:/var/lib/mysql
+    env_file:
+      - ./.env
+
+  reviews-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wrct-reviews-backend
+    command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8001"
+    restart: always
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - reviews-db
+networks:
+  default:
+      name: wrct-dockernet

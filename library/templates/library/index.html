@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}wrct database{% endblock %}
+
+{% block content %}
+<main class='big'>
+<h1 class='header-h1'>wrct : a database</h1>
+<header class='header'>
+  <aside>
+    <h2>Quick links</h2>
+    <ul>
+      <li><a href="https://cmu.box.com/s/z90uuq9clj19xsa43rq6p6wq62v3uffk">Digital Bin</a></li>
+      <li><a href="https://cmu.box.com/s/jlow52gircgh9l32noxgqhvkdqjk9stp">Digital TBR</a></li>
+      <li><a href="https://cmu.box.com/s/pt618hioiowze759rg74y2lyni11ib81">Digital Library</a></li>
+      <li class="mt2"><a href="{% url 'library:create' 'album' %}">Add new album to db</a></li>
+      <li><a href="{% url 'library:create' 'review' %}">Add new review to db</a></li>
+    </ul>
+  </aside>
+
+  <div>
+    <h2>Hello, <a href='{% url "library:profile" %}'>{{ user }}</a>!</h2>
+    <p class='subtitle'><b>DJ name:</b> {% if user.djname %}{{ user.djname }}{% endif %}</p>
+    <p class='subtitle'><b>Reviews this semester:</b> {{ user.reviews_this_semester }}</p>
+    <p><a href='#'>log out</a></p>
+  </div>
+</header>
+
+<section>
+  <h1>Recent reviews</h1>
+  <div class='button-container'>
+    <a href="{% url 'library:create' 'review' %}">
+      <button class="outline">
+        New Review <b class='icon'>+</b>
+      </button>
+    </a>
+    <a href="{% url 'library:list' 'review' %}">
+      <button class="outline">
+        View all reviews
+      </button>
+    </a>
+  </div>
+  {% if tables.reviews.objects %}
+  {% include "library/includes/pagination.html" with page=tables.reviews.objects param=tables.reviews.param %}
+  {% include "library/includes/table.html" with table_obj=tables.reviews truncateRows=True class="mt1-5" %}
+  {% endif %}
+</section>
+
+<section>
+  <h1>Recent albums</h1>
+  <div class='button-container'>
+    <a href="{% url 'library:create' 'album' %}">
+      <button class="outline">
+        New Album <b class='icon'>+</b>
+      </button>
+    </a>
+    <a href="{% url 'library:list' 'album' %}">
+      <button class="outline">
+        View all albums
+      </button>
+    </a>
+  </div>
+  {% if tables.albums.objects %}
+  {% include "library/includes/pagination.html" with page=tables.albums.objects param=tables.albums.param %}
+  {% include "library/includes/table.html" with table_obj=tables.albums fields="album artist label genre year date_added status" truncateRows=True class="mt1-5" %}
+  {% endif %}
+
+  <h2 class='mt1-5'>Advanced album search</h2>
+  {% include "library/includes/album_search.html" with form=searchForm %}
+</section>
+
+</main>
+
+{% endblock %}

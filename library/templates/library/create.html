@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% load library_filters %}
+{% block title %}wrct database : {% if object %}update {{ table }}: {{ object }}{% else %}add a new {{ table }}{% endif %}{% endblock %}
+
+{% block content %}
+<main>
+  {# if there's no object then show create links for other tables #}
+  {% if not object %}{% with tables="album artist genre label review user"|parse_array %}
+  <div class="list-links">
+    {% for ftable in tables %}<span><a href="{% url 'library:create' ftable %}"{% if ftable == table|lower %} class="active"{% endif %}>{{ ftable|capfirst }}</a> </span> {% endfor %}
+  </div>
+  {% endwith %}{% endif %}
+  <h1 class='large'>{% if object %}update {{ table }}: {{ object }}{% else %}add a new {{ table }}{% endif %}</h1>
+  {% if object %}<a href='{% url "library:detail" object.table object.id %}'>&#8592; back to {{ object.table }} {{ object }}</a>
+  {% elif related %}<a href='{% url "library:detail" related.table related.id %}'>&#8592; back to {{ related.table }} {{ related }}</a>
+  {% else %}<a href='{% url "library:list" table|lower %}'>&#8592; back to {{ table }}s</a>{% endif %}
+
+  <form class='form mt1-5' method="post">
+    {% csrf_token %}
+    <div class="grid">
+      {{ form }}
+    </div>
+    <button type="submit" class="outline mt1-5">submit</button>
+  </form>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/create.js' %}"></script>
+{% endblock %}
